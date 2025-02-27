@@ -82,8 +82,9 @@
     
 
     <?php
+require 'create.php';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    //  du formulaTraitementire d'inscription
     $nom = htmlspecialchars($_POST['nom']);
     $prenom = htmlspecialchars($_POST['prenom']);
     $date_naissance = htmlspecialchars($_POST['date_naissance']);
@@ -92,21 +93,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = htmlspecialchars($_POST['email']);
     $mot_de_passe = password_hash($_POST['mot_de_passe'], PASSWORD_DEFAULT);
 
-    // Connexion à la base de données et insertion des données
-    require 'db.php';
-    $sql = "INSERT INTO utilisateurs (nom, prenom, date_naissance, adresse, telephone, email, mot_de_passe) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssssss", $nom, $prenom, $date_naissance, $adresse, $telephone, $email, $mot_de_passe);
-
-    if ($stmt->execute()) {
+    if (createUser($nom, $prenom, $date_naissance, $adresse, $telephone, $email, $mot_de_passe)) {
         echo "<div class='alert alert-success mt-3' role='alert'>Inscription réussie !</div>";
     } else {
-        echo "<div class='alert alert-danger mt-3' role='alert'>Erreur : " . $stmt->error . "</div>";
+        echo "<div class='alert alert-danger mt-3' role='alert'>Erreur lors de l'inscription.</div>";
     }
-
-    $stmt->close();
-    $conn->close();
 }
 ?>
+
 </body>
 </html>
