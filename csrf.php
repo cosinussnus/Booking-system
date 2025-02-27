@@ -9,6 +9,9 @@ function generateCSRFToken() {
 }
 
 function validateCSRFToken($token) {
-    return hash_equals($_SESSION['csrf_token'], $token);
+    if (isset($_SESSION['csrf_token']) && !empty($_SESSION['csrf_token'])) {
+        return hash_equals($_SESSION['csrf_token'], $token);
+    }
+    return false;
 }
 ?>
