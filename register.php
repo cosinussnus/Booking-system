@@ -1,3 +1,31 @@
+<?php
+require 'database/csrf.php';
+require 'database/create.php';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Vérification du token CSRF
+    if (!validateCSRFToken($_POST['csrf_token'])) {
+        echo "<div class='alert alert-danger mt-3' role='alert'>Token CSRF invalide.</div>";
+        exit();
+    }
+
+    $nom = htmlspecialchars($_POST['nom']);
+    $prenom = htmlspecialchars($_POST['prenom']);
+    $date_naissance = htmlspecialchars($_POST['date_naissance']);
+    $adresse = htmlspecialchars($_POST['adresse']);
+    $telephone = htmlspecialchars($_POST['telephone']);
+    $email = htmlspecialchars($_POST['email']);
+    $mot_de_passe = password_hash($_POST['mot_de_passe'], PASSWORD_DEFAULT);
+
+    if (createUser($nom, $prenom, $date_naissance, $adresse, $telephone, $email, $mot_de_passe)) {
+        echo "<div class='alert alert-success mt-3' role='alert'>Inscription réussie !</div>";
+    } else {
+        echo "<div class='alert alert-danger mt-3' role='alert'>Erreur lors de l'inscription : " . $conn->error . "</div>";
+    }
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -79,27 +107,23 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-    
-
-    <?php
-require 'create.php';
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nom = htmlspecialchars($_POST['nom']);
-    $prenom = htmlspecialchars($_POST['prenom']);
-    $date_naissance = htmlspecialchars($_POST['date_naissance']);
-    $adresse = htmlspecialchars($_POST['adresse']);
-    $telephone = htmlspecialchars($_POST['telephone']);
-    $email = htmlspecialchars($_POST['email']);
-    $mot_de_passe = password_hash($_POST['mot_de_passe'], PASSWORD_DEFAULT);
-
-    if (createUser($nom, $prenom, $date_naissance, $adresse, $telephone, $email, $mot_de_passe)) {
-        echo "<div class='alert alert-success mt-3' role='alert'>Inscription réussie !</div>";
-    } else {
-        echo "<div class='alert alert-danger mt-3' role='alert'>Erreur lors de l'inscription.</div>";
-    }
-}
-?>
+        // Validation du formulaire
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                var forms = document.getElementsByClassName('needs-validation');
+                var validation = Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
 
 </body>
 </html>
