@@ -1,6 +1,7 @@
 <?php
-require 'database/csrf.php';
-require 'database/create.php';
+session_start();
+require 'csrf.php';
+require 'create.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Vérification du token CSRF
@@ -25,18 +26,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription</title>
+    <!-- Lien vers Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="bg-light py-4">
+    <header class="bg-light py-4">
         <div class="container text-center">
             <h1 class="mb-4">Système de Réservation en Ligne</h1>
             <nav class="navbar navbar-expand-lg navbar-light">
@@ -58,6 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <section class="register text-center">
             <h2 class="mb-4">Créer un compte</h2>
             <form action="register.php" method="POST" class="needs-validation" novalidate>
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCSRFToken()); ?>">
                 <div class="form-group">
                     <label for="nom">Nom :</label>
                     <input type="text" id="nom" name="nom" class="form-control" required>
@@ -124,6 +126,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }, false);
         })();
     </script>
-
 </body>
 </html>
